@@ -9,23 +9,22 @@ task:
     - env ASSUME_ALWAYS_YES=yes pkg remove -y python27 python2 python37
     - env ASSUME_ALWAYS_YES=yes pkg install -y python3 python38 py38-polib py38-lxml
     - env ASSUME_ALWAYS_YES=yes pkg install -y gmake pkgconf poco cppunit autotools coreutils libreoffice pango git bash npm
-    - mkdir libreoffice-src
+    - chown -R nobody .
+    - su -m nobody -c 'mkdir libreoffice-src'
     - cd libreoffice-src
     - fetch http://arrowd.name/libreoffice-include.tar.xz
-    - tar -xvf libreoffice-include.tar.xz
+    - su -m nobody -c 'tar -xvf libreoffice-include.tar.xz'
   build_script:
-    - mkdir .git/hooks
-    - pw useradd -n lool -d /tmp/loolhome -m
-    - chmod -R o+rwx ./
-    - su -m lool -c './autogen.sh'
-    - 'su -m lool -c ''env HOME=/tmp/loolhome MAKE=gmake
+    - pw useradd -n lool
+    - su -m nobody -c './autogen.sh'
+    - 'su -m nobody -c ''env HOME=${CIRRUS_WORKING_DIR} MAKE=gmake
         CPPFLAGS="-isystem /usr/local/include" CFLAGS="-I/usr/local/include"
         CXXFLAGS="-I/usr/local/include" LDFLAGS=-L/usr/local/lib ./configure
         --with-lo-path=/usr/local/lib/libreoffice/
         --with-lokit-path=./libreoffice-src/include
         --disable-seccomp --disable-setcap --enable-debug'' '
-    - su -m lool -c 'env HOME=/tmp/loolhome gmake -j`sysctl -n hw.ncpu`'
+    - su -m nobody -c 'env HOME=${CIRRUS_WORKING_DIR} gmake -j`sysctl -n hw.ncpu`'
     - chown root ./loolmount
     - chmod +s ./loolmount
   test_script:
-#    - su -m lool -c 'env HOME=/tmp/loolhome gmake check'
+#    - su -m lool -c 'env HOME=${CIRRUS_WORKING_DIR} gmake check'
