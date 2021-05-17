@@ -1,6 +1,8 @@
 task:
   name: "FreeBSD 13"
   freebsd_instance:
+    cpu: 4
+    memory: 16GB
     matrix:
       - image_family: freebsd-13-0-snap
   deps_script:
