@@ -27,4 +27,4 @@ task:
     - chown root ./loolmount
     - chmod +s ./loolmount
   test_script:
-#    - su -m lool -c 'env HOME=${CIRRUS_WORKING_DIR} gmake check'
+    - su -m nobody -c 'env HOME=${CIRRUS_WORKING_DIR} gmake check'
